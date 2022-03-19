@@ -18,6 +18,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(routes)
+app.use('/post/', require('./routes/postApi'))
 app.use(passport.initialize())
 require('./config/passport')(passport)
 
