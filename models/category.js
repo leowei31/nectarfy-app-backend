@@ -14,17 +14,7 @@ const categorySchema = new mongoose.Schema({
 	description: {
 		type: String,
 		required: true,
-	},
-    likes: {
-        type: [
-            {
-                user: {
-                    type: mongoose.Schema.Types.ObjectId, 
-                    ref: 'Post'
-                }
-            }
-        ],
-    }
+	}
 });
 
 module.exports = CATEGORY = mongoose.model('Category', categorySchema)

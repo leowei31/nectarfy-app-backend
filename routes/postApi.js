@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const Post = require('../models/post');
+const User = require('../models/user');
 
 // @route   GET /post
 // @desc.   Test route
@@ -20,7 +21,42 @@ router.get('/:postId', async (req, res) => {
             return res.status(404).json({msg: "Could not find post."});
         }
 
+
         res.json(post);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// @route   GET /post/category/:catId
+// @desc.   Retrieve post by id
+// @access  Public 
+router.get('/category/:catId', async (req, res) => {
+    try {
+
+        // const posts = await Post.findById(req.params.catId);
+        const posts = await Post.find({category: req.params.catId});
+
+        if (!posts) {
+            return res.status(404).json({msg: "Could not find post."});
+        }
+
+        for (const post of posts) {
+            const user = await User.findById(post.user, '-password -_id');
+
+            for (const comment of post.comments) {
+                const commentUser = await User.findById(comment.userId, '-password -_id');
+                comment._doc.username = commentUser.name;
+            }
+
+            post._doc.username = user.name;
+        }
+
+        console.log(posts);
+
+        res.json(posts);
 
     } catch (error) {
         console.error(error.message);
@@ -36,6 +72,7 @@ router.post('/', [
     check('title', 'Title is required').not().isEmpty(),
     check('description', 'Description is required').not().isEmpty(),
     check('datePosted', 'Date posted is required').not().isEmpty(),
+    check('category', 'Category is required').not().isEmpty(),
 ], async (req, res) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
@@ -47,6 +84,7 @@ router.post('/', [
         title: req.body.title,
         description: req.body.description,
         datePosted: req.body.datePosted,
+        category: req.body.category,
         likes: req.body.likes,
         comments: req.body.comments,
     })
