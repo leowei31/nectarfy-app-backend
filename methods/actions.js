@@ -54,6 +54,16 @@ var functions = {
         else {
             return res.json({success: false, msg: 'No Headers'})
         }
+    },
+    getuserid: function (req, res){
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            var token = req.headers.authorization.split(' ')[1]
+            var decodedtoken = jwt.decode(token, config.secret)
+            return res.json({success: true, msg: decodedtoken._id})
+        }
+        else {
+            return res.json({success: false, msg: 'No Headers'})
+        }
     }
 }
 

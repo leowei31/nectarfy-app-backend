@@ -17,4 +17,6 @@ router.post('/authenticate', actions.authenticate)
 
 router.get('/getinfo', actions.getinfo)
 
+router.get('/getuserid', actions.getuserid)
+
 module.exports = router;
