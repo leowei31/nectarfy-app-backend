@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const Post = require('../models/post');
-const User = require('../models/user');
 
 // @route   GET /post
 // @desc.   Test route
@@ -12,7 +11,22 @@ router.get('/', (req, res) => res.send('post route working'));
 // @route   GET /post/:postId
 // @desc.   Retrieve post by id
 // @access  Public 
-router.get('/:postId', (req, res) => res.send(`${req.params.postId}`));
+router.get('/:postId', async (req, res) => {
+    try {
+
+        const post = await Post.findById(req.params.postId);
+
+        if (!post) {
+            return res.status(404).json({msg: "Could not find post."});
+        }
+
+        res.json(post);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
 
 // @route   POST /post
 // @desc.   Post a post
@@ -52,6 +66,17 @@ router.post('/', [
 // @route   DELETE /post/:postId
 // @desc.   Delete post by id
 // @access  Public 
-// router.delete()
+router.delete('/:postId', async (req, res) => {
+    try {
+
+        const post = await Post.findById(req.params.postId);
+        await post.remove();
+        res.json({msg: 'Post deleted!'})
+        
+    } catch (error) {
+        console.error(error.messaga);
+        res.status(500).send('Server error');
+    }
+})
 
 module.exports = router;

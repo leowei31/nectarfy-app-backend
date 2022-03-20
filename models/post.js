@@ -42,8 +42,17 @@ const postSchema = new mongoose.Schema({
         type: [
             {
                 comment: {
-                    type: mongoose.Schema.Types.ObjectId, 
-                    ref: 'Comment'
+                    type: String,
+                    required: true
+                },
+                user: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
+                    required: true
+                },
+                datePosted: {
+                    type: Date,
+                    required: true
                 }
             }
         ],
