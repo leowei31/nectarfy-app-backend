@@ -68,13 +68,11 @@ router.post('/', [
 // @access  Public 
 router.delete('/:postId', async (req, res) => {
     try {
-
         const post = await Post.findById(req.params.postId);
         await post.remove();
         res.json({msg: 'Post deleted!'})
-        
     } catch (error) {
-        console.error(error.messaga);
+        console.error(error.message);
         res.status(500).send('Server error');
     }
 })
