@@ -3,7 +3,7 @@ var jwt = require('jwt-simple')
 var config = require('../config/dbconfig')
 
 var functions = {
-    addNew: function (req, res) {
+    addNew: function async (req, res) {
         if ((!req.body.name) || (!req.body.password)) {
             res.json({success: false, msg: 'Enter all fields'})
         }
@@ -12,6 +12,7 @@ var functions = {
                 name: req.body.name,
                 password: req.body.password
             });
+
             newUser.save(function (err, newUser) {
                 if (err) {
                     res.json({success: false, msg: 'Failed to save'})

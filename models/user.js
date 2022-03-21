@@ -4,7 +4,8 @@ var bcrypt = require('bcrypt')
 var userSchema = new Schema({
     name: {
         type: String,
-        require: true
+        require: true,
+        unique: true,
     },
     password: {
         type: String,
