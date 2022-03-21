@@ -25,13 +25,17 @@ router.get('/', async (req, res) => {
             }
         }
 
+        const recentUser = await User.findById(recentPost.user);
+        recentPost._doc.username = recentUser.name;
+        const hottestUser = await User.findById(hottestPost.user);
+        hottestPost._doc.username = hottestUser.name;
+
         res.send([recentPost, hottestPost]);
         
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');
     }
-    
 })
 
 // @route   GET /post/:postId
