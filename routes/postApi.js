@@ -5,9 +5,34 @@ const Post = require('../models/post');
 const User = require('../models/user');
 
 // @route   GET /post
-// @desc.   Test route
+// @desc.   Retrieve featured posts
 // @access  Public 
-router.get('/', (req, res) => res.send('post route working'));
+router.get('/', async (req, res) => {
+
+    try {
+
+        const posts = await Post.find();
+        var recentPost = null;
+        var hottestPost = null;
+
+        for (const post of posts) {
+            if (recentPost === null || post.datePosted > recentPost.datePosted) {
+                recentPost = post;
+            }
+
+            if (hottestPost === null || post.likes.length > hottestPost.likes.length) {
+                hottestPost = post;
+            }
+        }
+
+        res.send([recentPost, hottestPost]);
+        
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+    
+})
 
 // @route   GET /post/:postId
 // @desc.   Retrieve post by id
