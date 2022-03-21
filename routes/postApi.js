@@ -64,6 +64,83 @@ router.get('/category/:catId', async (req, res) => {
     }
 });
 
+// @route   PUT /post/like/:postId
+// @desc.   Add a like to a post
+// @access  Public 
+router.put('/like/:postId', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        if(post.likes.filter(like => like.user.toString() === req.body.userId).length > 0) {
+            return res.json(400).json({msg: 'already liked'});
+        }
+        post.likes.unshift({user: req.body.userId});
+        await post.save();
+        res.json(post.likes);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+// @route   PUT /post/unlike/:postId
+// @desc.   Unlike to a post
+// @access  Public 
+router.put('/unlike/:postId', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        if(post.likes.filter(like => like.user.toString() === req.body.userId).length === 0) {
+            return res.json(400).json({msg: 'not yet liked'});
+        }
+        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.body.userId);
+        post.likes.splice(removeIndex, 1);
+        await post.save();
+        res.json(post.likes);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+
+// @route   POST /post/comment/:postId
+// @desc.   Add a comment to a post
+// @access  Public 
+router.post('/comment/:postId', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        const newComment = {
+            comment: req.body.comment,
+            userId: req.body.userId,
+            datePosted: req.body.datePosted
+        }
+        post.comments.unshift(newComment);
+        await post.save();
+        res.json(post.comments);
+        
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+// @route   DELETE /post/uncomment/:postId/:commentId
+// @desc.   Delete a comment
+// @access  Public 
+router.delete('/comment/:postId/:commentId', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+
+        const removeIndex = post.comments.map(comment => comment._id.toString()).indexOf(req.params.commentId);
+        if (removeIndex === -1) {
+            return res.status(404).json({msg: 'comment does not exist'});
+        }
+        post.comments.splice(removeIndex, 1);
+        await post.save();
+        res.json(post.comments);
+        
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+
 // @route   POST /post
 // @desc.   Post a post
 // @access  Public 
