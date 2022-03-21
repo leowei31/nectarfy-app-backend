@@ -27,8 +27,17 @@ router.get('/', async (req, res) => {
 
         const recentUser = await User.findById(recentPost.user);
         recentPost._doc.username = recentUser.name;
+        for (const comment of recentPost.comments) {
+            const commentUser = await User.findById(comment.userId, '-password -_id');
+            comment._doc.username = commentUser.name;
+        }
+
         const hottestUser = await User.findById(hottestPost.user);
         hottestPost._doc.username = hottestUser.name;
+        for (const comment of hottestPost.comments) {
+            const commentUser = await User.findById(comment.userId, '-password -_id');
+            comment._doc.username = commentUser.name;
+        }
 
         res.send([recentPost, hottestPost]);
         
